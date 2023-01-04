@@ -7,9 +7,11 @@ defmodule BudgetChat.Application do
 
   @impl true
   def start(_type, _args) do
+    port = String.to_integer(System.get_env("PORT", "12345"))
+
     children = [
-      # Starts a worker by calling: BudgetChat.Worker.start_link(arg)
-      # {BudgetChat.Worker, arg}
+      {Registry, keys: :duplicate, name: BudgetChat.ClientRegistry},
+      {Task, fn -> BudgetChat.Server.listen(port) end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
